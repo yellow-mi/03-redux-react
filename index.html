@@ -229,7 +229,13 @@
             function List(props) {
                 return (
                     <ul>
-                        <li>List</li>
+                        {props.items.map((item) => (
+                            <li key={item.id}>
+                                <span>
+                                    {item.name}
+                                </span>
+                            </li>
+                        ))}
                     </ul>
                 )
             }
@@ -258,30 +264,55 @@
                                 ref={(input) => this.input = input}
                             />
                             <button onClick={this.addItem}>Add Todo</button>
-                            <List />
+                            <List items={this.props.todos} />
                         </div>
                     )
                 }
             }
 
             class Goals extends React.Component {
+                addItem = (e) => {
+                    e.preventDefault()
+                    const name = this.input.value
+                    this.input.value = ''
+
+                    this.props.store.dispatch(addGoalAction({
+                        id: generateId(),
+                        name,
+                    }))
+                }
                 render() {
                     return (
                         <div>
                             <h1>Goal List</h1>
-
-                            <List />
+                            <input
+                                type='text'
+                                placeholder='Add Goal'
+                                ref={(input) => this.input = input}
+                            />
+                            <button onClick={this.addItem}>Add Goal</button>   
+                            <List items={this.props.goals} />
                         </div>
                     )
                 }
             }
 
             class App extends React.Component {
+                componentDidMount () {
+                    const { store } = this.props
+
+                    // what we want whenever the store changes
+                    store.subscribe(() => this.forceUpdate()) //re-render of the component (child components)
+                }
+
                 render() {
+                    const { store } = this.props
+                    const { todos, goals } = store.getState()
+
                     return (
                         <div>
-                            <Todos store={this.props.store} />
-                            <Goals />
+                            <Todos store={this.props.store} todos={todos} />
+                            <Goals goals={goals} store={this.props.store} />
                         </div>
                     )
                 }
