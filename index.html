@@ -129,6 +129,14 @@
                 todos,
                 goals,
             }), Redux.applyMiddleware(checker, logger)) // Now, whenever we dispatch an action, before hits the reducer, our checker middleware will run and then our logger middleware will run
+            /*SAME AS:
+                function app (state = {}, action) {
+                    return {
+                        todos: todos(state.todos, action),
+                        goals: goals(state.goals, action),
+                    }
+                }
+            */
         </script>
 
         <script type="text/babel">
